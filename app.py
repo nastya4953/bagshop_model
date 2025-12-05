@@ -386,3 +386,13 @@ if st.session_state["scenarios"]:
 
             st.write("\n\n".join(text))
 
+            #Кнопка скидання
+            if st.button("Почати спочатку"):
+                st.session_state["scenarios"] = []
+                st.experimental_rerun()
+
+else:
+    st.info(
+        "Заповніть параметри вище і натисніть кнопку **«Розрахувати»**."
+    )
+
