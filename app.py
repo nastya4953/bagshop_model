@@ -19,8 +19,9 @@ st.write(
 if "scenarios" not in st.session_state:
     st.session_state["scenarios"] = []
 #таблиця    
-if "show_chart" not in st.session_state:
-    st.session_state["show_chart"] = False
+if "compare_clicked" not in st.session_state:
+    st.session_state["compare_clicked"] = False
+
 
 
 #Значення за замовчуванням (2024 рік)
