@@ -1,5 +1,6 @@
 #Веб-моделювання трансакційних витрат.
 import streamlit as st
+import pandas as pd #для таблиць
 from model_transaction_costs import (
     ModelParams,
     calc_total,
