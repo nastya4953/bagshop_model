@@ -218,7 +218,8 @@ if st.button("Розрахувати"):
     st.success(
         f"Сценарій №{len(st.session_state['scenarios'])} успішно розраховано."
     )
-
+    st.session_state["compare_clicked"] = False
+    st.session_state["show_chart"] = False
 #Останній сценарій
 if st.session_state["scenarios"]:
     last = st.session_state["scenarios"][-1]
