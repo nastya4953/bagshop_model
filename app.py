@@ -197,3 +197,5 @@ if st.session_state["scenarios"]:
         {"№": 3, "Стаття": "Маркетинг", "Сума, грн": f"{res['marketing']:.2f}"},
         {"№": 4, "Стаття": "Персонал", "Сума, грн": f"{res['staff']:.2f}"},
     ]
+    df = pd.DataFrame(table).set_index("№")
+    st.table(df)
