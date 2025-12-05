@@ -152,3 +152,37 @@ staff_per_order = st.number_input(
     value=float(default.staff_per_order),
     step=1.0,
 )
+
+if st.button("Розрахувати"):
+    params = ModelParams(
+        Q=Q,
+        avg_check=avg_check,
+        p_loc=p_loc,
+        p_int=p_int,
+        return_rate=return_rate,
+        c_loc=c_loc,
+        c_int=c_int,
+        c_ret_loc=c_ret_loc,
+        c_ret_int=c_ret_int,
+        online_share=online_share,
+        pay_commission=pay_commission,
+        n_new_customers=n_new_customers,
+        cac=cac,
+        staff_fixed=staff_fixed,
+        staff_per_order=staff_per_order,
+        #тільки для цього розрахунку
+        extra_items=extra_items,
+    )
+    result = calc_total(params)
+
+    #Збереження сценарію
+    st.session_state["scenarios"].append(
+        {
+            "id": len(st.session_state["scenarios"]) + 1,
+            "params": params,
+            "result": result,
+        }
+    )
+    st.success(
+        f"Сценарій №{len(st.session_state['scenarios'])} успішно розраховано."
+    )
