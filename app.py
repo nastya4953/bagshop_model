@@ -314,10 +314,8 @@ if st.session_state["scenarios"]:
 
             comp_df = pd.DataFrame(comp_rows).set_index("Сценарій")
             st.dataframe(comp_df, use_container_width=True)
-            # --- ГРАФІК ЗАЛЕЖНОСТЕЙ (X – обирається, Y – фіксоване «Разом, грн») ---
+            #ГРАФІК ЗАЛЕЖНОСТЕЙ
             st.subheader("Графік залежності загальних трансакційних витрат")
-            
-            # Формуємо окремий DataFrame з числовими значеннями
             plot_rows = []
             for s in st.session_state["scenarios"]:
                 pr = s["params"]
