@@ -315,68 +315,68 @@ if st.session_state["scenarios"]:
             comp_df = pd.DataFrame(comp_rows).set_index("Сценарій")
             st.dataframe(comp_df, use_container_width=True)
             # --- ГРАФІК ЗАЛЕЖНОСТЕЙ (X – обирається, Y – фіксоване «Разом, грн») ---
-st.subheader("Графік залежності загальних трансакційних витрат")
-
-# Формуємо окремий DataFrame з числовими значеннями
-plot_rows = []
-for s in st.session_state["scenarios"]:
-    pr = s["params"]
-    rr = s["result"]
-    plot_rows.append(
-        {
-            "Сценарій": s["id"],
-            "Q (замовлення)": pr.Q,
-            "Середній чек, грн": pr.avg_check,
-            "Частка локальних доставок": pr.p_loc,
-            "Частка міжобласних": pr.p_int,
-            "Рівень повернень, %": pr.return_rate * 100,
-            "Частка онлайн оплат, %": pr.online_share * 100,
-            "Комісія платіжного сервісу, %": pr.pay_commission * 100,
-            "Залучені клієнти": pr.n_new_customers,
-            "CAC, грн": pr.cac,
-            "Фіксовані витрати персонал, грн": pr.staff_fixed,
-            "Змінні витрати на замовлення, грн": pr.staff_per_order,
-            "Логістика, грн": rr["logistics"],
-            "Платіжні сервіси, грн": rr["payments"],
-            "Маркетинг, грн": rr["marketing"],
-            "Персонал, грн": rr["staff"],
-            "Додаткові, грн": rr["extra_net"],
-            "Разом, грн": rr["total"],
-        }
-    )
-
-plot_df = pd.DataFrame(plot_rows).set_index("Сценарій")
-metric_options = list(plot_df.columns)
-
-#графік
-if st.button("Створити графік"):
-    st.session_state["show_chart"] = True
-
-if st.session_state["show_chart"]:
-    #X
-    x_metric = st.selectbox(
-        "Показник по осі X",
-        options=metric_options,
-        index=metric_options.index("Частка онлайн оплат, %")
-        if "Частка онлайн оплат, %" in metric_options
-        else 0,
-    )
-
-    #Y фіксовано – «Разом, грн»
-    y_metric = "Разом, грн" if "Разом, грн" in metric_options else metric_options[-1]
-
-    chart_df = (
-        plot_df[[x_metric, y_metric]]
-        .sort_values(x_metric)
-        .set_index(x_metric)
-    )
-    st.line_chart(chart_df)
-
-    st.caption(
-        f"На графіку показано, як змінюється загальна сума трансакційних витрат "
-        f"(«{y_metric}») залежно від вибраного показника «{x_metric}» "
-        "для всіх розрахованих сценаріїв."
-    )
+            st.subheader("Графік залежності загальних трансакційних витрат")
+            
+            # Формуємо окремий DataFrame з числовими значеннями
+            plot_rows = []
+            for s in st.session_state["scenarios"]:
+                pr = s["params"]
+                rr = s["result"]
+                plot_rows.append(
+                    {
+                        "Сценарій": s["id"],
+                        "Q (замовлення)": pr.Q,
+                        "Середній чек, грн": pr.avg_check,
+                        "Частка локальних доставок": pr.p_loc,
+                        "Частка міжобласних": pr.p_int,
+                        "Рівень повернень, %": pr.return_rate * 100,
+                        "Частка онлайн оплат, %": pr.online_share * 100,
+                        "Комісія платіжного сервісу, %": pr.pay_commission * 100,
+                        "Залучені клієнти": pr.n_new_customers,
+                        "CAC, грн": pr.cac,
+                        "Фіксовані витрати персонал, грн": pr.staff_fixed,
+                        "Змінні витрати на замовлення, грн": pr.staff_per_order,
+                        "Логістика, грн": rr["logistics"],
+                        "Платіжні сервіси, грн": rr["payments"],
+                        "Маркетинг, грн": rr["marketing"],
+                        "Персонал, грн": rr["staff"],
+                        "Додаткові, грн": rr["extra_net"],
+                        "Разом, грн": rr["total"],
+                    }
+                )
+            
+            plot_df = pd.DataFrame(plot_rows).set_index("Сценарій")
+            metric_options = list(plot_df.columns)
+            
+            #графік
+            if st.button("Створити графік"):
+                st.session_state["show_chart"] = True
+            
+            if st.session_state["show_chart"]:
+                #X
+                x_metric = st.selectbox(
+                    "Показник по осі X",
+                    options=metric_options,
+                    index=metric_options.index("Частка онлайн оплат, %")
+                    if "Частка онлайн оплат, %" in metric_options
+                    else 0,
+                )
+            
+                #Y фіксовано – «Разом, грн»
+                y_metric = "Разом, грн" if "Разом, грн" in metric_options else metric_options[-1]
+            
+                chart_df = (
+                    plot_df[[x_metric, y_metric]]
+                    .sort_values(x_metric)
+                    .set_index(x_metric)
+                )
+                st.line_chart(chart_df)
+            
+                st.caption(
+                    f"На графіку показано, як змінюється загальна сума трансакційних витрат "
+                    f"(«{y_metric}») залежно від вибраного показника «{x_metric}» "
+                    "для всіх розрахованих сценаріїв."
+                )
 
 
             #Пошук найкращого
