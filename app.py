@@ -33,7 +33,6 @@ default = ModelParams(
     cac=52,
     staff_fixed=500000,
     staff_per_order=22,
-    extra_items=[],
 )
 
 st.subheader("Вхідні дані")
