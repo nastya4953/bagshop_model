@@ -274,3 +274,50 @@ if st.session_state["scenarios"]:
             for s in st.session_state["scenarios"]:
                 pr = s["params"]
                 rr = s["result"]
+
+                # опис додаткових показників
+                if pr.extra_items:
+                    extras = "; ".join(
+                        f"{item.name} ({'+' if item.kind=='cost' else '-'}{item.amount:.2f})"
+                        for item in pr.extra_items
+                    )
+                else:
+                    extras = "-"
+
+                comp_rows.append(
+                    {
+                        "Сценарій": s["id"],
+                        "Q (замовлення)": pr.Q,
+                        "Середній чек, грн": f"{pr.avg_check:.2f}",
+                        "Частка локальних доставок": f"{pr.p_loc:.3f}",
+                        "Частка міжобласних": f"{pr.p_int:.3f}",
+                        "Рівень повернень": f"{pr.return_rate:.4f}",
+                        "Вартість локальної доставк., грн": f"{pr.c_loc:.2f}",
+                        "Вартість міжобласної доставк., грн": f"{pr.c_int:.2f}",
+                        "Повернення локал., грн": f"{pr.c_ret_loc:.2f}",
+                        "Повернення міжобл., грн": f"{pr.c_ret_int:.2f}",
+                        "Частка онлайн оплат": f"{pr.online_share:.3f}",
+                        "Комісія платіжного сервісу, %": f"{pr.pay_commission*100:.2f}",
+                        "Залучені клієнти": pr.n_new_customers,
+                        "CAC, грн": f"{pr.cac:.2f}",
+                        "Фіксовані витрати персонал, грн": f"{pr.staff_fixed:.2f}",
+                        "Змінні витрати на замовлення, грн": f"{pr.staff_per_order:.2f}",
+                        "Додаткові показники": extras,
+                        "Логістика, грн": f"{rr['logistics']:.2f}",
+                        "Платіжні сервіси, грн": f"{rr['payments']:.2f}",
+                        "Маркетинг, грн": f"{rr['marketing']:.2f}",
+                        "Персонал, грн": f"{rr['staff']:.2f}",
+                        "Додаткові, грн": f"{rr['extra_net']:.2f}",
+                        "Разом, грн": f"{rr['total']:.2f}",
+                    }
+                )
+
+            comp_df = pd.DataFrame(comp_rows).set_index("Сценарій")
+            st.dataframe(comp_df, use_container_width=True)
+
+            #Пошук найкращого
+            best = min(
+                st.session_state["scenarios"],
+                key=lambda x: x["result"]["total"],
+            )
+            best_total = best["result"]["total"]
