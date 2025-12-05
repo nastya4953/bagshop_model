@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd #для таблиць
 from model_transaction_costs import (
     ModelParams,
+    ExtraItem,
     calc_total,
 )
 st.set_page_config(
@@ -14,9 +15,10 @@ st.write(
     "Введіть параметри нижче та натисніть **«Розрахувати»**, "
     "щоб отримати структуру трансакційних витрат."
 )
-#Пам'ять сценаріїв, перевірка ініціалізації
+#Пам'ять сценаріїв
 if "scenarios" not in st.session_state:
     st.session_state["scenarios"] = []
+
 #Значення за замовчуванням (2024 рік)
 default = ModelParams(
     Q=10900,
@@ -34,6 +36,7 @@ default = ModelParams(
     cac=52,
     staff_fixed=500000,
     staff_per_order=22,
+    extra_items=[],
 )
 
 st.subheader("Вхідні дані")
@@ -45,6 +48,7 @@ Q = st.number_input(
     value=default.Q,
     step=100,
 )
+
 avg_check = st.number_input(
     "Середній чек (грн)",
     min_value=0.0,
@@ -78,7 +82,6 @@ c_loc = st.number_input(
     value=float(default.c_loc),
     step=5.0,
 )
-
 c_int = st.number_input(
     "Вартість міжобласної доставки, грн",
     min_value=0.0,
@@ -94,7 +97,6 @@ c_ret_loc = st.number_input(
     value=float(default.c_ret_loc),
     step=1.0,
 )
-
 c_ret_int = st.number_input(
     "Вартість повернення міжобласної доставки, грн",
     min_value=0.0,
@@ -152,6 +154,32 @@ staff_per_order = st.number_input(
     step=1.0,
 )
 
+#Додати показник
+st.subheader("Додатковий показник (за бажанням)")
+add_extra = st.checkbox("Додати додатковий показник до поточного сценарію")
+extra_items = []
+if add_extra:
+    extra_kind_label = st.radio(
+        "Тип показника",
+        ["Додаткові витрати (+ до витрат)", "Додатковий дохід (– до витрат)"],
+    )
+    extra_name = st.text_input("Назва показника")
+    extra_amount = st.number_input(
+        "Сума показника, грн",
+        min_value=0.0,
+        value=0.0,
+        step=10.0,
+    )
+
+    if extra_name and extra_amount > 0:
+        if extra_kind_label.startswith("Додаткові витрати"):
+            kind = "cost"
+        else:
+            kind = "revenue"
+        extra_items.append(
+            ExtraItem(name=extra_name.strip(), kind=kind, amount=extra_amount)
+        )
+
 if st.button("Розрахувати"):
     params = ModelParams(
         Q=Q,
@@ -169,6 +197,8 @@ if st.button("Розрахувати"):
         cac=cac,
         staff_fixed=staff_fixed,
         staff_per_order=staff_per_order,
+        #тільки для цього розрахунку
+        extra_items=extra_items,
     )
     result = calc_total(params)
 
@@ -198,5 +228,49 @@ if st.session_state["scenarios"]:
         {"№": 3, "Стаття": "Маркетинг", "Сума, грн": f"{res['marketing']:.2f}"},
         {"№": 4, "Стаття": "Персонал", "Сума, грн": f"{res['staff']:.2f}"},
     ]
+
+    # Додаткові
+    if res["extra_net"] != 0:
+        sign = "+" if res["extra_net"] > 0 else "-"
+        table.append(
+            {
+                "№": 5,
+                "Стаття": "Додаткові показники",
+                "Сума, грн": f"{res['extra_net']:.2f} ({sign})",
+            }
+        )
+        row_total = 6
+    else:
+        row_total = 5
+
+    table.append(
+        {"№": row_total, "Стаття": "Разом", "Сума, грн": f"{res['total']:.2f}"}
+    )
     df = pd.DataFrame(table).set_index("№")
     st.table(df)
+
+    count = len(st.session_state["scenarios"])
+
+    # Перший обрахунок
+    if count == 1:
+        st.info(
+            "Це перший розрахунок. Ви можете змінити показники та натиснути "
+            "«Розрахувати» ще раз, щоб додати новий сценарій."
+        )
+    else:
+        st.write(f"Всього розраховано сценаріїв: {count}")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.info(
+                "Щоб додати ще один сценарій, змініть показники вище і натисніть «Розрахувати»."
+            )
+        with col2:
+            compare_clicked = st.button("Провести порівняння")
+
+        if compare_clicked:
+            st.subheader("Порівняння сценаріїв")
+
+            comp_rows = []
+            for s in st.session_state["scenarios"]:
+                pr = s["params"]
+                rr = s["result"]
