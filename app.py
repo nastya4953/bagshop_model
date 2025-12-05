@@ -18,6 +18,10 @@ st.write(
 #Пам'ять сценаріїв
 if "scenarios" not in st.session_state:
     st.session_state["scenarios"] = []
+#таблиця    
+if "show_chart" not in st.session_state:
+    st.session_state["show_chart"] = False
+
 
 #Значення за замовчуванням (2024 рік)
 default = ModelParams(
