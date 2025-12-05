@@ -55,9 +55,6 @@ def calc_total(params: ModelParams) -> Dict[str, float]:
         "payments": payments,
         "marketing": marketing,
         "staff": staff,
-        "extra_cost": extra["extra_cost"],
-        "extra_revenue": extra["extra_revenue"],
-        "extra_net": extra["extra_net"],
         "total": total,
     }
     
