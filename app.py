@@ -168,8 +168,6 @@ if st.button("Розрахувати"):
         cac=cac,
         staff_fixed=staff_fixed,
         staff_per_order=staff_per_order,
-        #тільки для цього розрахунку
-        extra_items=extra_items,
     )
     result = calc_total(params)
 
