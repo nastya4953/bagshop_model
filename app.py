@@ -269,7 +269,9 @@ if st.session_state["scenarios"]:
                 "Щоб додати ще один сценарій, змініть показники вище і натисніть «Розрахувати»."
             )
         with col2:
-            compare_clicked = st.button("Провести порівняння")
+            if st.button("Провести порівняння"):
+                st.session_state["compare_clicked"] = True
+                st.session_state["show_chartt"] = False
 
         if compare_clicked:
             st.subheader("Порівняння сценаріїв")
