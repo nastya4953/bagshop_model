@@ -271,7 +271,7 @@ if st.session_state["scenarios"]:
         with col2:
             if st.button("Провести порівняння"):
                 st.session_state["compare_clicked"] = True
-                st.session_state["show_chartt"] = False
+                st.session_state["show_chart"] = False
 
         if compare_clicked:
             st.subheader("Порівняння сценаріїв")
