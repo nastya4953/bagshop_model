@@ -186,3 +186,18 @@ if st.button("Розрахувати"):
     st.success(
         f"Сценарій №{len(st.session_state['scenarios'])} успішно розраховано."
     )
+
+#Останній сценарій
+if st.session_state["scenarios"]:
+    last = st.session_state["scenarios"][-1]
+    st.subheader(
+        f"Результати останнього розрахунку (сценарій №{last['id']})"
+    )
+    res = last["result"]
+
+    table = [
+        {"№": 1, "Стаття": "Логістика", "Сума, грн": f"{res['logistics']:.2f}"},
+        {"№": 2, "Стаття": "Платіжні сервіси", "Сума, грн": f"{res['payments']:.2f}"},
+        {"№": 3, "Стаття": "Маркетинг", "Сума, грн": f"{res['marketing']:.2f}"},
+        {"№": 4, "Стаття": "Персонал", "Сума, грн": f"{res['staff']:.2f}"},
+    ]
