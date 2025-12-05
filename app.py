@@ -2,7 +2,6 @@
 import streamlit as st
 from model_transaction_costs import (
     ModelParams,
-    ExtraItem,
     calc_total,
 )
 st.set_page_config(
